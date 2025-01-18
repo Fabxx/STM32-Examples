@@ -17,9 +17,9 @@
  */
 
 /*
-	Using Pull up/down registers to clear the state of the PA0 pin even if 3.3v is attached.
- 	THe logic is to trigger a resistor each second to see the changing state between
- 	HIGH and LOW
+	Using Pull up/down registers to clear the state of the PA0 pin.
+ 	THe logic is to trigger a resistor to see the changing state between
+ 	HIGH and LOW.
  */
 
 
