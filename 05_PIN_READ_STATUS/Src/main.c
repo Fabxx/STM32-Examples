@@ -25,22 +25,35 @@
 #include <stdio.h>
 #include <stdint.h>
 
+/*
+ * Reads status of PA0, if it has current (HIGH) then turn on LED4
+ * if it's LOW, turn off the LED4.
+ */
+
 int main(void)
 {
-	 uint16_t data = 0xB410;
+	 volatile uint32_t *pRCC_AHB1   		 =  (uint32_t*)0x40023830;
+	 volatile uint32_t *pGPIOD_pin_moder     =  (uint32_t*)0x40020C00;
+	 volatile uint32_t *pGPIOA_pin_moder     =  (uint32_t*)0x40020000;
+	 volatile uint32_t *pOutPin 	   		 =  (uint32_t*)0x40020C14;
+	 volatile const uint32_t *const pInPin   =  (uint32_t*)0x40020010;
 
-	 /*
-	  * This is just an example with numbers but it should be done with pointers.
-	  * End result is 0x002A, we discard 00 and we keep 2A, the relevant data.
-	  *
-	  * You first need to see where the data you need relies into the registry and then
-	  * you move it with the proper shift to reach the LSB, then you export it with the
-	  * bitmask that preserves the moved bits to extract them.
-	  */
 
-	 uint8_t extracted_portion = (uint8_t) ((data >> 9) & 0x003F);
+	 //enable clock for both GPIOA and GPIOD
+	*pRCC_AHB1 |= (1 << 0);
+	*pRCC_AHB1 |= (1 << 3);
 
-	 printf("Extracted bits of data: %x: \n", extracted_portion);
+	*pGPIOD_pin_moder    |= (1 << 24);
+	*pGPIOA_pin_moder    &= ~(3 << 0);
 
-	for(;;);
+	while (1) {
+
+		uint8_t pinState = (uint8_t)(*pInPin & 0x1);
+
+		if (pinState) {
+			*pOutPin   |= (1 << 12);
+		} else {
+			*pOutPin   &= ~(1 << 12);
+		}
+	}
 }

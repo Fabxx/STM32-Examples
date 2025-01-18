@@ -6,7 +6,7 @@
  ******************************************************************************
  * @attention
  *
- * Copyright (c) 2024 STMicroelectronics.
+ * Copyright (c) 2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -16,23 +16,38 @@
  ******************************************************************************
  */
 
+#include <stdint.h>
+
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
 #include <stdio.h>
+#include <stdint.h>
+#include "main.h"
+/*
+ * Bitfields are used to specify how many bits we are using of that data type.
+ *
+ * This is useful if you already know where the data relies inside the register
+ * and if you know how much space it takes to represent.
+ *
+ * In this code example i will extract information about a 32-bit registers
+ *
+ * and will init the structs with the specific bitfields that i will work on.
+ *
+ * No need to manually calculate the bitmask anymore to change the bits.
+
+ */
 
 int main(void)
 {
-	int addr = 0;
-	int *addr2 = (int*)0x20000000;
+	RCC_AHB1ENR_t *pRCC_AHB1 = (RCC_AHB1ENR_t*)0x40023830;
+	GPIOx_MODER_t *pGPIOD_mode = (GPIOx_MODER_t*)0x40020C00;
+	GPIOx_ODR_t *pGPIOD_output_pin = (GPIOx_ODR_t*)0x40020C14;
 
-	int *value = &addr;
+	pRCC_AHB1->gpiod_en = 1;
 
-	int *address = addr2;
+	pGPIOD_mode->pin_12 = 1;
 
-	printf("%p, %d\n", address, *address);
-
-	for(;;);
-
+	pGPIOD_output_pin->pin_12 = 1;
 }

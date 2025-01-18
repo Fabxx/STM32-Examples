@@ -48,7 +48,7 @@ int main(void)
 
 	// apply bitwise or to enable clock.
 
-	*pRCC_AHB1 |= 0x08;
+	*pRCC_AHB1 |= 0x8;
 
 	/*
 	 * clear GPIOD 24-25 bits. Leave others unaltered
